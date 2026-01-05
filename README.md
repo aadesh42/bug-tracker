@@ -1,31 +1,75 @@
-# 🐞 Bug Tracker API (FastAPI)
+# 🐞 Bug Tracker – Full Stack Web Application
 
-A production-style Bug Tracking System built with FastAPI, SQLAlchemy, and JWT authentication.
+A production-ready **Bug Tracking System** built with FastAPI, PostgreSQL, and Streamlit.
+Designed with role-based access control and deployed on Render.
 
-## 🚀 Features
-- User registration & login (JWT)
-- Role-based access control (Admin / Developer / Tester)
-- Bug lifecycle management with enforced state transitions
-- Immutable audit logs for compliance & traceability
-- SQLite database with SQLAlchemy ORM
-- Swagger/OpenAPI documentation
+---
 
-## 🧱 Tech Stack
+## 🚀 Live Demo
+- Frontend: https://bug-tracker-frontend.onrender.com
+- Backend API: https://bug-tracker-dzpk.onrender.com
+
+---
+
+## 🛠 Tech Stack
+**Backend**
 - FastAPI
-- SQLAlchemy
-- SQLite
-- JWT (python-jose)
-- Passlib (bcrypt)
-- Pydantic v2
+- PostgreSQL (SQLAlchemy ORM)
+- JWT Authentication
+- Uvicorn
 
-## 🔐 Roles
-- **Tester**: Create bugs
-- **Developer**: Update bug status
-- **Admin**: Full access, audit logs
+**Frontend**
+- Streamlit
+- REST API integration
 
-## ▶️ Run Locally
-```bash
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python -m uvicorn app.main:app --reload
+**DevOps**
+- Render (Backend + Frontend + Database)
+- GitHub CI/CD
+
+---
+
+## ✨ Features
+- User Authentication (JWT)
+- Role-Based Access (Admin / Tester / Developer)
+- Create, View, and Manage Bugs
+- Priority & Status Tracking
+- Secure API endpoints
+- Fully deployed with live URLs
+
+---
+
+## 🔐 Demo Credentials
+| Role | Username | Password |
+|----|----|----|
+| Admin | admin | admin123 |
+| Tester | tester | tester123 |
+| Developer | dev | dev123 |
+
+---
+
+## 📂 Project Structure
+bug-tracker/
+│
+├── app/ # FastAPI backend
+├── frontend/ # Streamlit frontend
+├── requirements.txt
+└── README.md
+
+
+---
+
+## 📌 API Documentation
+Swagger UI available at:
+https://bug-tracker-dzpk.onrender.com/docs
+
+---
+
+## 🎯 Why This Project?
+This project demonstrates:
+- Real-world backend architecture
+- Secure authentication
+- Database integration
+- Frontend-to-backend communication
+- Cloud deployment & CI/CD
+
+Built to simulate professional software development workflows.
