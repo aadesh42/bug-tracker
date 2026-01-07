@@ -7,7 +7,7 @@ from .schemas import BugCreate, BugResponse, BugUpdateStatus
 from .enums import BugStatus, UserRole
 from .auth import router as auth_router
 from .permissions import require_roles
-from .seed_users import seed_users   # ✅ FIXED IMPORT
+from .seed_users import seed_users
 
 # -------------------------
 # APP INITIALIZATION
@@ -17,12 +17,17 @@ app = FastAPI(title="Bug Tracker API")
 
 app.include_router(auth_router)
 
-# Create DB tables
-Base.metadata.create_all(bind=engine)
+# -------------------------
+# STARTUP EVENT
+# -------------------------
 
-# Seed demo users on startup (Render-safe)
 @app.on_event("startup")
 def startup_event():
+    # ⚠️ TEMPORARY: RESET DATABASE (REMOVE AFTER SUCCESSFUL DEPLOY)
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+
+    # Seed demo users
     seed_users()
 
 # -------------------------
