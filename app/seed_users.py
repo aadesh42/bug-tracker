@@ -1,17 +1,18 @@
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
-from database import SessionLocal
-from models import User
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from .database import SessionLocal
+from .models import User
+from .security import hash_password
+from .enums import UserRole
+
 
 def seed_users():
     db: Session = SessionLocal()
 
     users = [
-        ("admin", "admin123", "ADMIN"),
-        ("tester", "tester123", "TESTER"),
-        ("dev", "dev123", "DEVELOPER"),
+        ("admin", "admin123", UserRole.ADMIN),
+        ("tester", "tester123", UserRole.TESTER),
+        ("dev", "dev123", UserRole.DEVELOPER),
     ]
 
     for username, password, role in users:
@@ -19,7 +20,7 @@ def seed_users():
         if not existing:
             user = User(
                 username=username,
-                password=pwd_context.hash(password),
+                password_hash=hash_password(password),
                 role=role
             )
             db.add(user)
