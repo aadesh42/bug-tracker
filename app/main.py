@@ -6,14 +6,28 @@ from .models import Bug, BugAuditLog, User, Base
 from .schemas import BugCreate, BugResponse, BugUpdateStatus
 from .enums import BugStatus, UserRole
 from .auth import router as auth_router
-from .dependencies import get_current_user
 from .permissions import require_roles
+from .seed_users import seed_users   # ✅ FIXED IMPORT
 
-app = FastAPI()
+# -------------------------
+# APP INITIALIZATION
+# -------------------------
+
+app = FastAPI(title="Bug Tracker API")
 
 app.include_router(auth_router)
 
+# Create DB tables
 Base.metadata.create_all(bind=engine)
+
+# Seed demo users on startup (Render-safe)
+@app.on_event("startup")
+def startup_event():
+    seed_users()
+
+# -------------------------
+# VALID STATUS TRANSITIONS
+# -------------------------
 
 VALID_TRANSITIONS = {
     BugStatus.OPEN: {BugStatus.IN_PROGRESS},
@@ -31,17 +45,21 @@ VALID_TRANSITIONS = {
 def create_bug(
     bug: BugCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(UserRole.TESTER, UserRole.ADMIN))
+    current_user: User = Depends(
+        require_roles(UserRole.TESTER, UserRole.ADMIN)
+    ),
 ):
     new_bug = Bug(
         title=bug.title,
         description=bug.description,
         priority=bug.priority,
-        created_by_id=current_user.id
+        created_by_id=current_user.id,
     )
+
     db.add(new_bug)
     db.commit()
     db.refresh(new_bug)
+
     return new_bug
 
 
@@ -50,7 +68,9 @@ def update_bug_status(
     bug_id: int,
     update: BugUpdateStatus,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(UserRole.DEVELOPER, UserRole.ADMIN))
+    current_user: User = Depends(
+        require_roles(UserRole.DEVELOPER, UserRole.ADMIN)
+    ),
 ):
     bug = db.query(Bug).filter(Bug.id == bug_id).first()
 
@@ -60,14 +80,14 @@ def update_bug_status(
     if update.status not in VALID_TRANSITIONS[bug.status]:
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid status transition from {bug.status} to {update.status}"
+            detail=f"Invalid status transition from {bug.status} to {update.status}",
         )
 
     audit = BugAuditLog(
         bug_id=bug.id,
         old_status=bug.status,
         new_status=update.status,
-        changed_by_id=current_user.id
+        changed_by_id=current_user.id,
     )
 
     bug.status = update.status
@@ -83,7 +103,9 @@ def update_bug_status(
 def get_bug_audit(
     bug_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(UserRole.ADMIN))
+    current_user: User = Depends(
+        require_roles(UserRole.ADMIN)
+    ),
 ):
     logs = (
         db.query(BugAuditLog)
@@ -96,7 +118,7 @@ def get_bug_audit(
             "old_status": log.old_status,
             "new_status": log.new_status,
             "changed_at": log.changed_at,
-            "changed_by": log.changed_by.username
+            "changed_by": log.changed_by.username,
         }
         for log in logs
     ]
