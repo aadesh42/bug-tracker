@@ -1,13 +1,22 @@
 from enum import Enum
 
+
+class UserRole(str, Enum):
+    ADMIN = "ADMIN"
+    TESTER = "TESTER"
+    DEVELOPER = "DEVELOPER"
+
+
 class BugStatus(str, Enum):
     OPEN = "OPEN"
     IN_PROGRESS = "IN_PROGRESS"
     FIXED = "FIXED"
-    CLOSED = "CLOSED"
     REOPENED = "REOPENED"
+    CLOSED = "CLOSED"
 
-class UserRole(str, Enum):
-    ADMIN = "ADMIN"
-    DEVELOPER = "DEVELOPER"
-    TESTER = "TESTER"
+
+class BugPriority(str, Enum):
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+
